@@ -1,30 +1,54 @@
-# 🎯 Lead Finder & Email Verification Bot
+# 🎯 AI Recruitment Bot (Groq AI + Google X-Ray Search + Google Sheets)
 
-An automated lead enrichment engine that takes prospect names and company domains, performs real-time **DNS MX validation**, generates **corporate B2B email permutations**, and auto-populates verified leads directly into your Google Sheets outreach queue.
-
----
-
-## ⚡ How It Works
-1. You paste raw leads (`full_name`, `company_name`, `company_domain`, `location`) into the **`🎯 Lead_Finder`** tab.
-2. Every morning at **08:00 AM IST** (or manually via GitHub Actions), the engine:
-   - Verifies the company's live MX records via native DNS.
-   - Identifies the email provider (Google Workspace, Microsoft 365, Zoho).
-   - Generates the standard corporate email pattern (`first.last@company.com`).
-   - Automatically copies the lead into your **`Details`** sheet with empty `Sent Status`.
-3. Your outreach bot wakes up at **10:00 AM IST** and sends emails to the verified leads automatically.
+An AI-powered recruitment engine using **Groq AI** (`qwen/qwen3.6-27b`) to parse Job Descriptions, generate Google X-Ray & LinkedIn Boolean search queries, discover candidate profiles, score candidate suitability with logical reasoning, generate personalized LinkedIn connection notes, and sync everything directly with Google Sheets.
 
 ---
 
-## 🚀 Setup Guide
+## ⚡ Features
 
-### 1. Configure GitHub Secrets
-In your new GitHub repository, go to **Settings > Secrets and variables > Actions** and add:
+1. **Job Description Intelligence (Groq AI)**:
+   - Simplifies complex JDs into plain-English executive summaries.
+   - Extracts keywords, required/nice-to-have skills, Do's & Don'ts, and recruiter screening questions.
+   - Generates targeted **Google X-Ray queries** (`site:linkedin.com/in/...`) and **LinkedIn Boolean search strings**.
 
-| Secret Name | Value |
-| :--- | :--- |
-| `SPREADSHEET_ID` | Your Google Sheet ID string. |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | Your Service Account JSON key content. |
+2. **Candidate Discovery & Scraping**:
+   - Executes Google X-Ray search to pull candidate LinkedIn profiles.
+   - Extracts Name, Headline, Current Role, Company, Location, and Bio snippets.
 
-### 2. Schedule
-- **Automated Cron**: Monday to Saturday at **08:00 AM IST** (`02:30 UTC`).
-- **Manual Trigger**: Actions tab > **Lead Finder & Email Enricher** > **Run workflow**.
+3. **AI Candidate Scoring & Connection Notes**:
+   - Computes a **0-100% Match Score** (`HIGH_MATCH`, `MEDIUM_MATCH`, `LOW_MATCH`) against JD criteria.
+   - Identifies key skill gaps and red flags.
+   - Drafts personalized **LinkedIn Connection Notes** (< 300 characters).
+
+4. **Google Sheets Sync**:
+   - Automatically populates `🎯 JDs_Analysis` and appends evaluated candidates to `👥 Candidate_Pool`.
+
+---
+
+## 🚀 Quick Setup & Usage
+
+### 1. Installation
+```bash
+git clone https://github.com/Rohanpatel16/rec-bot.git
+cd rec-bot
+npm install
+```
+
+### 2. Environment Variables (`.env`)
+Copy `.env.example` to `.env`:
+```env
+GROQ_API_KEY=gsk_your_groq_api_key
+GROQ_MODEL=qwen/qwen3.6-27b
+SPREADSHEET_ID=your_google_sheet_id
+GOOGLE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
+```
+
+### 3. Run the Bot
+- **Process JDs from Google Sheets**:
+  ```bash
+  node recruiter.mjs
+  ```
+- **Direct CLI Job Description Input**:
+  ```bash
+  node recruiter.mjs --jd "Looking for a Senior Full Stack Developer (Node.js & React) in Bengaluru..."
+  ```

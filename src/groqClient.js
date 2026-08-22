@@ -2,19 +2,30 @@ import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const DEFAULT_MODEL = process.env.GROQ_MODEL || 'qwen/qwen3.6-27b';
+const DEFAULT_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 const FALLBACK_MODELS = [
   DEFAULT_MODEL,
-  'qwen/qwen3.6-27b',
-  'groq/compound',
-  'groq/compound-mini',
   'openai/gpt-oss-120b',
+  'qwen/qwen3.6-27b',
+  'groq/compound-mini',
   'openai/gpt-oss-20b',
   'allam-2-7b',
 ];
 
 // Deduplicate fallback list while maintaining priority order
 const MODEL_PRIORITY = [...new Set(FALLBACK_MODELS)];
+
+/**
+ * Clean markdown codeblocks (e.g. ```json ... ```) from LLM output before parsing
+ */
+function sanitizeJsonString(raw) {
+  if (!raw) return '';
+  return raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+}
 
 function getGroqClient() {
   const apiKey = process.env.GROQ_API_KEY;
@@ -25,7 +36,7 @@ function getGroqClient() {
 }
 
 /**
- * Call Groq AI with automatic model failover and JSON response parsing.
+ * Call Groq AI with automatic model failover and robust JSON response parsing.
  * @param {string} prompt - User prompt / content
  * @param {string} systemInstruction - System prompt instructions
  * @returns {Promise<object>} Parsed JSON response from Groq AI
@@ -52,7 +63,8 @@ export async function generateGroqJson(prompt, systemInstruction = '') {
         throw new Error('Empty response received from Groq AI.');
       }
 
-      const parsedJson = JSON.parse(rawContent);
+      const cleanJsonStr = sanitizeJsonString(rawContent);
+      const parsedJson = JSON.parse(cleanJsonStr);
       return parsedJson;
     } catch (err) {
       console.warn(`⚠️ Model "${model}" failed: ${err.message}. Trying next fallback model...`);

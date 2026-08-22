@@ -32,12 +32,12 @@ export async function analyzeJobDescription(rawJd, customTitle = '') {
     "Question 2 to evaluate problem solving",
     "Question 3 to test domain fit"
   ],
-  "xray_search_query": "site:linkedin.com/in/ \\"Job Title\\" \\"PrimarySkill1\\" \\"PrimarySkill2\\" \\"LocationOrRemote\\"",
-  "boolean_search_string": "(\\"Title 1\\" OR \\"Title 2\\") AND (\\"Skill 1\\" OR \\"Skill 2\\") AND (\\"Location\\")"
+  "xray_search_query": "site:linkedin.com/in/ RoleTitle PrimarySkill Location",
+  "boolean_search_string": "(\"Title 1\" OR \"Title 2\") AND (\"Skill 1\" OR \"Skill 2\") AND (\"Location\")"
 }
 
 Requirements:
-- Ensure the X-Ray query uses site:linkedin.com/in/ format with clean quotes and targeted keywords.
+- Ensure the X-Ray query uses site:linkedin.com/in/ format with clean keywords for maximum search engine match flexibility.
 - Keep boolean_search_string formatted for standard search engines and LinkedIn search bar.
 - Be precise and realistic.
 

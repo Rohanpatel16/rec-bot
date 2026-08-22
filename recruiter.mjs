@@ -124,7 +124,6 @@ async function runDemoSample() {
   await processJobDescription(sampleJd, 'Senior Node.js & React Developer', 'JD_DEMO_001');
 }
 
-// Execute if called directly
-if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
-  main().catch(console.error);
-}
+// Execute main pipeline
+main().catch(console.error);
+
